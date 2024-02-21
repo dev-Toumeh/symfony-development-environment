@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+
+  # httpd-Apache
+  php:
+    build:
+      dockerfile: ./docker/httpd/Dockerfile
+    user: ${CONTAINER_USER}:${CONTAINER_USER}
+    container_name: php-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+
+  # Database
+  db:
+    build:
+      dockerfile: ./docker/mysql/Dockerfile
+    container_name: mariadb-container
+    user: ${CONTAINER_USER}:${CONTAINER_USER}
+    volumes:
+      - db-volume:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: database-01
+
+volumes:
+  db-volume:
