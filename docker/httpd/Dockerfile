@@ -3,28 +3,32 @@ FROM php:8.3.3-apache-bullseye
 WORKDIR /var/www/html
 
 # Define a build-time variables
-ARG USERNAME=my-user
-ARG GID=1000
-ARG UID=1000
+ARG USERNAME
+ARG GID
+ARG UID
+
+
+
 
 ## Install system dependencies
 RUN apt-get update \
     && apt-get install -y vim curl git
 
-# PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
+## PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
+## The following is based on typo3 System Requirements
 # Install typo3  nesseccery php extensions
 RUN set -eux; \
-    install-php-extensions  gd pdo_mysql intl zip @composer
+    install-php-extensions   pdo_mysql intl zip @composer # gd \
 
-# Add typo3 PHP configuration
-RUN echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/typo3.ini && \
-    echo "max_execution_time=240" >> /usr/local/etc/php/conf.d/typo3.ini && \
-    echo "max_input_vars=1500" >> /usr/local/etc/php/conf.d/typo3.ini && \
-    echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/typo3.ini && \
-    echo "upload_max_filesize" >> /usr/local/etc/php/conf.d/typo3.ini
-
+# Copy typo3 php config
+COPY ./conf/typo3.ini /usr/local/etc/php/conf.d/typo3.ini
+#typo3 php variables
+ENV PHP_MAX_EXECUTION_TIME=240 \
+    PHP_POST_MAX_SIZE=10M \
+    PHP_UPLOAD_MAX_FILE_SIZE=10M \
+    PHP_MEMORY_LIMIT=256
 
 # Create a user with UID 1000 and GID 1000
 RUN groupadd -g ${GID} ${USERNAME} \
