@@ -11,24 +11,24 @@ ARG UID
 COPY ./conf/mywebsite_vhost.conf /etc/apache2/sites-available/mywebsite_vhost.conf
 
 # Copy typo3 php necessary config
-COPY ./conf/typo3.ini /usr/local/etc/php/conf.d/typo3.ini
+COPY ./conf/extra.ini /usr/local/etc/php/conf.d/typo3.ini
 
 ## PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 ## Install system dependencies
 RUN apt-get update \
-   && apt-get install -y vim  # curl git
+   && apt-get install -y vim curl git
 
 ## The following is based on typo3 System Requirements
 # Install typo3  nesseccery php extensions
 RUN set -eux; \
-   install-php-extensions pdo_mysql intl zip @composer # gd
+   install-php-extensions pdo_mysql intl zip @composer
 
-# activate apache modules and vhost
-RUN a2enmod rewrite \
-   && a2enmod expires \
-   && a2enmod headers
+# here you can activate apache modules
+#RUN a2enmod rewrite \
+#   && a2enmod expires \
+#   && a2enmod headers
 
 # Create a user with UID 1000 and GID 1000
 RUN groupadd -g ${GID} ${USERNAME} \
