@@ -16,6 +16,8 @@ services:
       - ${APP_DEFAULT_PORT}
     volumes:
       - ./:/var/www/html
+    env_file:
+      - docker/httpd/httpd.env
 
   # Database
   db:
