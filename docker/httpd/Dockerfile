@@ -18,12 +18,12 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 
 ## Install system dependencies
 RUN apt-get update \
-   && apt-get install -y vim  # curl git
+   && apt-get install -y vim curl git
 
 ## The following is based on typo3 System Requirements
 # Install typo3  nesseccery php extensions
 RUN set -eux; \
-   install-php-extensions pdo_mysql intl zip @composer # gd
+   install-php-extensions pdo_mysql intl zip @composer gd exif
 
 # activate apache modules and vhost
 RUN a2enmod rewrite \
