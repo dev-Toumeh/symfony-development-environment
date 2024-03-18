@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
   # httpd-Apache
-  typo3:
+  php:
     build:
       context: ./docker/httpd/
       dockerfile: Dockerfile
