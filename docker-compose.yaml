@@ -15,7 +15,7 @@ services:
     ports:
       - ${APP_DEFAULT_PORT}
     volumes:
-      - ./:/var/www/html
+      - ./src:/var/www/html
     env_file:
       - docker/httpd/httpd.env
 
@@ -30,8 +30,10 @@ services:
       - ${DB_DEFAULT_PORT}
     restart: unless-stopped
     environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
-      MYSQL_DATABASE: ${DATABASE_NAME}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD}
 
 volumes:
   db-volume:
