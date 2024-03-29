@@ -1,4 +1,3 @@
-version: "3.8"
 services:
 
   # httpd-Apache
@@ -27,7 +26,6 @@ services:
     container_name: ${DB_CONTAINER_NAME}
     volumes:
       - db-volume:/var/lib/mysql
-      - ./docker/mysql/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     ports:
       - ${DB_DEFAULT_PORT}
     restart: unless-stopped
