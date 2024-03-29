@@ -17,7 +17,8 @@ services:
     volumes:
       - ./src:/var/www/html
     env_file:
-      - docker/httpd/httpd.env
+      - docker/httpd/env/httpd.env
+      - docker/httpd/env/extra.env
 
   # Database
   db:
@@ -26,14 +27,13 @@ services:
     container_name: ${DB_CONTAINER_NAME}
     volumes:
       - db-volume:/var/lib/mysql
+      - ./docker/mysql/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     ports:
       - ${DB_DEFAULT_PORT}
     restart: unless-stopped
     environment:
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
 
 volumes:
   db-volume:

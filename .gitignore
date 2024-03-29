@@ -1,7 +1,5 @@
 #phpstorm Configuration
 .idea/*
 
-./src
-/src/public/
-/src/vendor/
-/src/
+# files that need to be adjusted from the User
+# docker/httpd/env/extra.env
