@@ -9,16 +9,20 @@ services:
         - USERNAME=${APP_CONTAINER_USERNAME}
         - UID=${APP_CONTAINER_UID}
         - GID=${APP_CONTAINER_GID}
+      target: "${BUILD_TARGET:-app}"
     user: ${APP_CONTAINER_USERNAME}:${APP_CONTAINER_USERNAME}
     container_name: ${APP_CONTAINER_NAME}
     ports:
       - ${APP_DEFAULT_PORT}
     volumes:
       - ./src:/var/www/html
+      - ./docker/httpd/conf/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
     env_file:
       - docker/httpd/env/httpd.env
       - docker/httpd/env/extra.env
-
+    extra_hosts:
+      - ${HOST_DOCKER_INTERNAL}
+      - ${LOCAL_HOST}
   # Database
   db:
     build:
@@ -26,7 +30,6 @@ services:
     container_name: ${DB_CONTAINER_NAME}
     volumes:
       - db-volume:/var/lib/mysql
-      - ./docker/mysql/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     ports:
       - ${DB_DEFAULT_PORT}
     restart: unless-stopped
