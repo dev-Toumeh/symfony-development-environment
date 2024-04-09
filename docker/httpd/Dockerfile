@@ -1,4 +1,4 @@
-FROM php:8.3.3-apache-bullseye
+FROM php:8.3.3-apache-bullseye as app
 
 WORKDIR /var/www/html
 
@@ -25,7 +25,7 @@ RUN apt-get update \
 RUN set -eux; \
    install-php-extensions pdo_mysql intl zip @composer gd exif
 
-# activate apache modules and vhost
+# activate apache modules
 RUN a2enmod rewrite \
    && a2enmod expires \
    && a2enmod headers
@@ -37,6 +37,10 @@ RUN groupadd -g ${GID} ${USERNAME} \
 # Enable the site
 RUN a2ensite mywebsite_vhost.conf
 
-#  linking logs to stdout and stderr  NEED TO BE CHECKED
-#RUN ln -sfT /dev/stderr "/var/log/apache2/error.log" && \
-#    ln -sfT /dev/stdout "/var/log/apache2/access.log"
+FROM app as app_dev
+
+COPY ./conf/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+# Install xdebug
+RUN set -eux; \
+	install-php-extensions xdebug
