@@ -5,6 +5,7 @@ services:
     build:
       context: ./docker/httpd/
       dockerfile: Dockerfile
+      target: ${BUILD_TARGET_APP}
       args:
         - USERNAME=${APP_CONTAINER_USERNAME}
         - UID=${APP_CONTAINER_UID}
@@ -17,7 +18,9 @@ services:
       - ./src:/var/www/html
     env_file:
       - docker/httpd/env/httpd.env
-      - docker/httpd/env/extra.env
+#      - docker/httpd/env/extra.env # more info in README file
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   # Database
   db:
@@ -26,7 +29,6 @@ services:
     container_name: ${DB_CONTAINER_NAME}
     volumes:
       - db-volume:/var/lib/mysql
-      - ./docker/mysql/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     ports:
       - ${DB_DEFAULT_PORT}
     restart: unless-stopped
