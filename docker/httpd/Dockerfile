@@ -11,7 +11,7 @@ ARG UID
 COPY ./conf/mywebsite_vhost.conf /etc/apache2/sites-available/mywebsite_vhost.conf
 
 # Copy typo3 php necessary config
-COPY ./conf/extra.ini /usr/local/etc/php/conf.d/extra.ini
+COPY conf/extra.ini.template /usr/local/etc/php/conf.d/extra.ini
 
 ## PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/

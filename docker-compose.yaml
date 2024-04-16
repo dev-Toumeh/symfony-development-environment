@@ -1,7 +1,7 @@
 services:
 
   # httpd-Apache
-  php:
+  app:
     build:
       context: ./docker/httpd/
       dockerfile: Dockerfile
@@ -13,7 +13,8 @@ services:
     user: ${APP_CONTAINER_USERNAME}:${APP_CONTAINER_USERNAME}
     container_name: ${APP_CONTAINER_NAME}
     ports:
-      - ${APP_DEFAULT_PORT}
+      - ${APP_PORT_1}
+      - ${APP_PORT_2}
     volumes:
       - ./src:/var/www/html
     env_file:
@@ -25,16 +26,19 @@ services:
   # Database
   db:
     build:
-      dockerfile: ./docker/mysql/Dockerfile
+      context: ./docker/mysql/
+      dockerfile: Dockerfile
+      args:
+        - USERNAME=${APP_CONTAINER_USERNAME}
+        - UID=${APP_CONTAINER_UID}
+        - GID=${APP_CONTAINER_GID}
+    user: ${APP_CONTAINER_USERNAME}:${APP_CONTAINER_USERNAME}
     container_name: ${DB_CONTAINER_NAME}
     volumes:
-      - db-volume:/var/lib/mysql
+      - ./docker/mysql/db-volume:/var/lib/mysql
     ports:
-      - ${DB_DEFAULT_PORT}
+      - ${DB_PORT}
     restart: unless-stopped
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-
-volumes:
-  db-volume:

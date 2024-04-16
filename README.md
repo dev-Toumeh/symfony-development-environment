@@ -1,15 +1,14 @@
-# Docker-Based TYPO3 Development Environment Setup
-
+# php-dockerCompose-devstack
 ## Overview
-This project was built to serve as a TYPO3 development and deployment environment, based on the
-[TYPO3 System Requirements](https://docs.typo3.org/m/typo3/tutorial-getting-started/main/en-us/SystemRequirements/Index.html).
-
+This repository is designed to serve as a foundation for projects based on PHP.
+**Every branch in this repository will serve different PHP Framework**,
+in case you didn't find the Framework you are looking for you can use the main Branch
 ## Project Tree
     ├── docker
     │   ├── httpd
     │   │   ├── conf
     │   │   │   ├── mywebsite_vhost.conf
-    │   │   │   ├── extra.ini
+    │   │   │   ├── extra.ini.template
     │   │   │   └── xdebug.ini
     │   │   ├── Dockerfile
     │   │   └── env
@@ -19,14 +18,30 @@ This project was built to serve as a TYPO3 development and deployment environmen
     │   └── mysql
     │       └── Dockerfile
     ├── src
+    ├── .gitignore.template
     ├── docker-compose.dev.yaml
     ├── docker-compose.yaml
     ├── LICENSE
     └── README.md
 
-## Prerequisites
-
-Before setting up the project, ensure you have Docker and docker-compose installed on your machine. Follow the instructions below to install them:
+# Decisions
+- the project's main focus is building PHP Environment repository, that can server in any situation and under every Circumstances
+- other goals are improving my skills in docker and docker-compose
+- use GitHub as the main platform (central place for information)
+    - version control
+    - documentation
+    - issues
+    - less searching
+    - ability to use CI/CD (GitHub Actions) at a later time if necessary
+- learn Kubernetes
+## Technologies used
+- PHP
+- Apache
+## Available Branches
+### Typo3
+### Symfony
+## Development Environment Configuration
+### General commands
 
 - docker compose  run
 ```bash
@@ -54,3 +69,10 @@ docker-compose exec -it -u 0 <service-name> /bin/bash
 ```
 - build the service again after you made changes in dockerfile without cache
 ```bash
+ docker-compose build <service-name> --no-cache
+```
+- run and build the service after you made changes in dockerfile
+```bash
+ docker-compose up -d <service-name> --build
+```
+
