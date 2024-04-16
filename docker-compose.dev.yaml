@@ -1,11 +1,11 @@
 services:
 
   # httpd-Apache
-  php:
+  typo3:
     build:
       context: ./docker/httpd/
       dockerfile: Dockerfile
-      target: ${BUILD_TARGET_APP}
+      target: ${BUILD_TARGET_APP_DEV}
       args:
         - USERNAME=${APP_CONTAINER_USERNAME}
         - UID=${APP_CONTAINER_UID}
@@ -16,11 +16,10 @@ services:
       - ${APP_DEFAULT_PORT}
     volumes:
       - ./src:/var/www/html
+      - ./docker/httpd/conf/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
     env_file:
       - docker/httpd/env/httpd.env
 #      - docker/httpd/env/extra.env # more info in README file
-    extra_hosts:
-      - host.docker.internal:host-gateway
 
   # Database
   db:

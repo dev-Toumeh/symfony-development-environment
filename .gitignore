@@ -1,7 +1,0 @@
-#phpstorm Configuration
-.idea/*
-
-./src
-/src/public/
-/src/vendor/
-/src/
