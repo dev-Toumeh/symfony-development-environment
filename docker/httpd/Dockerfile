@@ -1,4 +1,4 @@
-FROM php:8.3.3-apache-bullseye as app
+FROM httpd:latest
 
 WORKDIR /var/www/html
 
@@ -7,44 +7,29 @@ ARG USERNAME
 ARG GID
 ARG UID
 
-# Copy the virtual host configuration file to the sites-available directory
-COPY ./conf/mywebsite_vhost.conf /etc/apache2/sites-available/mywebsite_vhost.conf
+RUN mkdir -p /var/run/mod_fcgid
 
-# Copy typo3 php necessary config
-COPY conf/extra.ini.template /usr/local/etc/php/conf.d/extra.ini
+RUN apt update && apt install -y vim curl wget gettext-base build-essential libfcgi-dev libaprutil1-dev
 
-## PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
-COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN cd /usr/src \
+    && wget https://downloads.apache.org/httpd/mod_fcgid/mod_fcgid-2.3.9.tar.gz \
+    && tar xvfz mod_fcgid-2.3.9.tar.gz \
+    && cd mod_fcgid-2.3.9 \
+    && APXS=/usr/local/apache2/bin/apxs ./configure.apxs \
+    && make \
+    && make install
 
-## Install system dependencies
-RUN apt-get update \
-   && apt-get install -y vim curl
+# Copy httpd configuration files
+COPY conf/httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY conf/httpd-vhosts.conf /usr/local/apache2/conf/extra/httpd-vhosts.conf
 
-## The following is based on typo3 System Requirements
-# Install typo3  nesseccery php extensions
-RUN set -eux; \
-   install-php-extensions pdo_mysql intl zip @composer
-
-# activate apache modules
-RUN a2enmod rewrite \
-   && a2enmod expires \
-   && a2enmod headers
+# Include the httpd-vhosts.conf in the httpd.conf
+RUN echo "Include conf/extra/httpd-vhosts.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Create a user with UID 1000 and GID 1000
 RUN groupadd -g ${GID} ${USERNAME} \
    && useradd -m -r -u ${UID} -g ${USERNAME} ${USERNAME}
 
-# Enable the site
-RUN a2ensite mywebsite_vhost.conf
-
-FROM app as app_dev
-
-COPY ./conf/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
-# Install xdebug
-RUN set -eux; \
-	install-php-extensions xdebug \
-
-#  linking logs to stdout and stderr  NEED TO BE CHECKED
-#RUN ln -sfT /dev/stderr "/var/log/apache2/error.log" && \
-#    ln -sfT /dev/stdout "/var/log/apache2/access.log"
+# Change ownership or modify permissions of the Apache configuration directory
+RUN chown -R ${USERNAME}:${USERNAME} /usr/local/apache2 \
+    && chmod -R 755 /usr/local/apache2
