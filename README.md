@@ -75,4 +75,3 @@ docker-compose exec -it -u 0 <service-name> /bin/bash
 ```bash
  docker-compose up -d <service-name> --build
 ```
-

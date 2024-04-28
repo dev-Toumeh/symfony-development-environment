@@ -1,38 +1,49 @@
 services:
 
   # httpd-Apache
-  app:
+  httpd:
     build:
       context: ./docker/httpd/
       dockerfile: Dockerfile
-      target: ${BUILD_TARGET_APP}
       args:
-        - USERNAME=${APP_CONTAINER_USERNAME}
-        - UID=${APP_CONTAINER_UID}
-        - GID=${APP_CONTAINER_GID}
-    user: ${APP_CONTAINER_USERNAME}:${APP_CONTAINER_USERNAME}
-    container_name: ${APP_CONTAINER_NAME}
+        - USERNAME=${CONTAINER_USERNAME}
+        - UID=${CONTAINER_UID}
+        - GID=${CONTAINER_GID}
+    user: ${CONTAINER_USERNAME}:${CONTAINER_USERNAME}
+    container_name: ${HTTPD_CONTAINER_NAME}
     ports:
-      - ${APP_PORT_1}
-      - ${APP_PORT_2}
+      - ${HTTPD_PORT_1}
+      - ${HTTPD_PORT_2}
     volumes:
       - ./src:/var/www/html
     env_file:
       - docker/httpd/env/httpd.env
-#      - docker/httpd/env/extra.env # more info in README file
-    extra_hosts:
-      - host.docker.internal:host-gateway
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php/
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET_APP}
+      args:
+        - USERNAME=${CONTAINER_USERNAME}
+        - UID=${CONTAINER_UID}
+        - GID=${CONTAINER_GID}
+    user: ${CONTAINER_USERNAME}:${CONTAINER_USERNAME}
+    container_name: ${PHP_CONTAINER_NAME}
+    volumes:
+      - ./src:/var/www/html
+    env_file:
+      - docker/php/env/php.env
+    expose:
+      - "9000"
 
   # Database
   db:
     build:
       context: ./docker/mysql/
       dockerfile: Dockerfile
-      args:
-        - USERNAME=${APP_CONTAINER_USERNAME}
-        - UID=${APP_CONTAINER_UID}
-        - GID=${APP_CONTAINER_GID}
-    user: ${APP_CONTAINER_USERNAME}:${APP_CONTAINER_USERNAME}
     container_name: ${DB_CONTAINER_NAME}
     volumes:
       - ./docker/mysql/db-volume:/var/lib/mysql
