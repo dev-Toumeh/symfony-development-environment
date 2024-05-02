@@ -1,31 +1,38 @@
-# php-dockerCompose-devstack
+# Symfony Development Environment
 ## Overview
-This repository is designed to serve as a foundation for projects based on PHP.
-**Every branch in this repository will serve different PHP Framework**,
-in case you didn't find the Framework you are looking for you can use the main Branch
+This repository is designed to serve as a foundation for php Symfony Projects.
 ## Project Tree
+    .
     ├── docker
     │   ├── httpd
     │   │   ├── conf
-    │   │   │   ├── mywebsite_vhost.conf
-    │   │   │   ├── extra.ini.template
-    │   │   │   └── xdebug.ini
+    │   │   │   ├── httpd.conf
+    │   │   │   └── httpd-vhosts.conf
     │   │   ├── Dockerfile
     │   │   └── env
-    │   │       ├── extra.env
-    │   │       ├── extra.env.template
     │   │       └── httpd.env
-    │   └── mysql
-    │       └── Dockerfile
+    │   ├── mysql
+    │   │   └── Dockerfile
+    │   └── php
+    │       ├── conf
+    │       │   └── www.conf
+    │       ├── Dockerfile
+    │       ├── env
+    │       │   └── php.env
+    │       └── ini
+    │           ├── extra.ini
+    │           ├── extra.ini.template
+    │           └── xdebug.ini
     ├── src
-    ├── .gitignore.template
+    │   └── .gitignore
     ├── docker-compose.dev.yaml
     ├── docker-compose.yaml
+    ├── .gitignore.template
     ├── LICENSE
     └── README.md
 
 # Decisions
-- the project's main focus is building PHP Environment repository, that can server in any situation and under every Circumstances
+- the project's main focus is building PHP Environment repository that can server in any situation and under every Circumstances
 - other goals are improving my skills in docker and docker-compose
 - use GitHub as the main platform (central place for information)
     - version control
@@ -33,15 +40,14 @@ in case you didn't find the Framework you are looking for you can use the main B
     - issues
     - less searching
     - ability to use CI/CD (GitHub Actions) at a later time if necessary
-- learn Kubernetes
+
 ## Technologies used
-- PHP
+- PHP-fpm
 - Apache
-## Available Branches
-### Typo3
-### Symfony
-## Development Environment Configuration
-### General commands
+- redis
+- mysql
+
+## Docker-Compose Commands
 
 - docker compose  run
 ```bash

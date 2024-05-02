@@ -21,6 +21,7 @@ services:
     depends_on:
       - php
 
+  # php-fpm
   php:
     build:
       context: ./docker/php/
@@ -55,3 +56,7 @@ services:
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+
+  # cache
+  redis:
+    image: redis:latest
