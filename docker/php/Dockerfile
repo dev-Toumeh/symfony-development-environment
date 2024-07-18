@@ -12,6 +12,7 @@ COPY ini/extra.ini /usr/local/etc/php/conf.d/extra.ini
 
 # copy php-fpm config
 COPY ./conf/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./conf/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 ## PHP extension installer image, https://github.com/mlocati/docker-php-extension-installer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
@@ -19,7 +20,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 ## Install system dependencies
 RUN apt update \
    && apt install -y vim curl git ca-certificates gnupg gettext-base iproute2 \
-   && curl -sSfL https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh | bash \
+   && curl -sSfL "https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh" | bash \
    && apt install -y --no-install-recommends symfony-cli \
    && rm -rf /var/lib/apt/lists/*
 
