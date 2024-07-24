@@ -1,5 +1,4 @@
 services:
-
   # httpd-Apache
   httpd:
     build:
@@ -55,6 +54,18 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
 
-  # cache
+  # Cache
   redis:
     image: redis:latest
+
+  # Database interface
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_PORT: ${PMA_PORT}
+      PMA_HOSTS: ${PMA_HOSTS}
+      PMA_USER: ${PMA_USER}
+      PMA_PASSWORD: ${PMA_PASSWORD}
